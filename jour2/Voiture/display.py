@@ -4,7 +4,7 @@ def is_car(list_car, position):
         on this position
     """
     for car in list_car:
-        if car["position"] == position:
+        if (car["position"] == position).all():
             return True
     return False
             

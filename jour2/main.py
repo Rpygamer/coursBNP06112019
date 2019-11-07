@@ -14,8 +14,8 @@ list_cars = [
     for pos in list_positions
 ]
 
-for i in range(5):
+for i in range(15):
     os.system("cls")
     display_board(list_cars)
     list_cars = move_cars(list_cars)
-    sleep(2)
+    sleep(0.5)

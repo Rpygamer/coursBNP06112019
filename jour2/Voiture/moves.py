@@ -1,3 +1,9 @@
+import numpy as np
+
+
+def turn_car(car):
+    car["direction"] = np.array([[0,1],[-1,0]]).dot(car["direction"])
+
 def move_cars(list_car):
     """
         return new list of positions
