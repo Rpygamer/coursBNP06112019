@@ -19,8 +19,7 @@ def move_cars(list_car):
     for car in list_car:
         new_position = car["position"] + car["direction"]
         if (new_position < 0).any() or (new_position >= 10).any():
-            turn_car(car)
+                    turn_car(car)
         else:
             car["position"] = new_position
     return list_car
-    
