@@ -78,14 +78,18 @@ une_autre_personne < une_personne
 une_autre_personne < 4
 
 
-# In[40]:
+# In[46]:
 
 
 from random import randint
 import traceback
 
-class NotEnoughMoney(Exception):
-    pass
+class NotEnoughMoneyException(Exception):
+    def __init__(self, compte, montant):
+        self.compte = compte
+        self.montant = montant
+    def corriger(self):
+        self.compte.depot(montant)
 
 class Compte:
     def __init__(self, solde_init):
@@ -106,10 +110,18 @@ class Compte:
 
         
 class CompteCheque(Compte):
+    # rajouter decouvert_max en attribut (par défaut 500)
+    def __init__(self, solde_init, decouvert_max=500):
+        Compte.__init__(self, solde_init)
+        self.decouvert_max = decouvert_max
+        
     def retrait(self, montant):
         assert montant > 0, ("On ne peut pas retrirer "
                                "un montant négatif")
         self.solde -= montant
+        if self.solde < -self.decouvert_max:
+            raise NotEnoughMoneyException(self, montant)
+            
         print(f"solde restant : {self.solde}")
 
 
@@ -123,7 +135,7 @@ class Person:
         self.firstname = prenom
         self.age = age_init
         self.location = "Bordeaux"
-        self.compte = Compte(solde_init)
+        self.compte = CompteCheque(solde_init)
         self.note = 100
       
     def say_hi(self):
@@ -136,7 +148,11 @@ class Person:
             self.compte.retrait(montant)
             other.compte.depot(montant)
         except AssertionError as e:
+            print("Error", e)
             self.note -= 1
+        except NotEnoughMoneyException as e:
+            print("Error", e)
+            e.corriger()
         
     def __str__(self):
         return f"firstname = {self.firstname}"
@@ -158,14 +174,18 @@ class Person:
 une_personne = Person("Martin", 6)
 une_autre_personne = Person("Jeanne")
 try:
-    une_personne.transfert(une_autre_personne, "500")
+    une_personne.transfert(une_autre_personne, 5000000)
 except AssertionError as e:
     print("une erreur est survenue", e)
 except TypeError as e:
 #     traceback.print_stack()
     print("une type erreur est survenue", e)
+except NotEnoughMoneyException as e:
+    print("une type erreur est survenue", e)
 except:
     print("Une erreur inattendue est survenue")
+    
+print(une_personne.compte.solde)
 
 
 # In[ ]:
